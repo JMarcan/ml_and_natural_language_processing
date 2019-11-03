@@ -78,14 +78,14 @@ def load_data(data_file):
     
     # check number of duplicates
     duplicated = df[df.duplicated(subset = 'message')]
-    print ("Number of duplicates: {}".format(duplicated.shape[0]))
+    debug_message("Number of duplicates before removing them: {}".format(duplicated.shape[0]))
     
     # drop duplicates
     df = df.drop_duplicates(subset = 'message')
     
     # check number of duplicates
     duplicated = df[df.duplicated(subset = 'message')]
-    print ("Number of duplicates: {}".format(duplicated.shape[0]))
+    debug_message("Number of duplicates after removing them: {}".format(duplicated.shape[0]))
     
     
     # 3. === load to database
