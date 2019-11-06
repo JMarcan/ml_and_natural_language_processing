@@ -94,9 +94,8 @@ def load_data(data_file):
 
     # 4. === define features and label arrays
 
-    #TODO: Finalize step 4.
-    X = 1
-    y = 1
+    X = df['message']
+    y = df.drop(columns=['message', 'original', 'genre'])
     
     debug_message("load_data exit")
                   
