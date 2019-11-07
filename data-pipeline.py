@@ -103,6 +103,7 @@ def load_data(data_file):
 
 
 def build_model():
+    debug_message("build-model entry")
     # text processing and model pipeline
 
 
@@ -111,11 +112,13 @@ def build_model():
 
     # create gridsearch object and return as final model pipeline
 
+    debug_message("build-model exit")
 
     return model_pipeline
 
 
 def train(X, y, model):
+    debug_message("train entry (X: {}, y: {}, model: {}".format(X, y, model))
     # train test split
 
 
@@ -124,7 +127,7 @@ def train(X, y, model):
 
     # output model test results
 
-
+    debug_message("train exit")
     return model
 
 
@@ -134,6 +137,7 @@ def export_model(model):
 
 
 def run_pipeline(data_file):
+    debug_message("run_pipeline entry (data_file: {}".format(data_file))
     X, y = load_data(data_file)  # run ETL pipeline
     
     '''
