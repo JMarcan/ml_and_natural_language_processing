@@ -132,8 +132,11 @@ def train(X, y, model):
 
 
 def export_model(model):
+    debug_message("export model enter")
+
     # Export model as a pickle file
-    pass
+    
+    debug_message("export model exit")
 
 
 def run_pipeline(data_file):
