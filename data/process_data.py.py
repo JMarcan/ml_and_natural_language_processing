@@ -29,14 +29,14 @@ def extract_column_names(row):
         
     return column_names
 
-def load_data(data_file):
+def run_ETL_pipeline(messages_path, categories_path, db_path):
     
-    debug_message("load_data entry ({})".format(data_file))
+    debug_message("run_ETL_pipeline entry (messages_path: {} | categories_path: {})".format(messages_path, categories_path))
     # 1. === read in file
     
     # 1. Load datasets
-    messages = pd.read_csv(data_file)
-    categories = pd.read_csv("categories.csv")
+    messages = pd.read_csv(messages_path)
+    categories = pd.read_csv(categories_path)
     
     # 2. Merge datasets
     df = pd.merge(messages, categories, how="left", on="id")
@@ -89,7 +89,8 @@ def load_data(data_file):
     
     
     # 3. === load to database
-    engine = create_engine('sqlite:///DisasterResponse.db')
+    sql_path = 'sqlite:///{}'.format(db_path)
+    engine = create_engine(sql_path)
     df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
 
     # 4. === define features and label arrays
@@ -97,38 +98,10 @@ def load_data(data_file):
     X = df['message']
     y = df.drop(columns=['message', 'original', 'genre'])
     
-    debug_message("load_data exit")
+    debug_message("run_ETL_pipeline exit")
                   
     return X, y
 
-
-def build_model():
-    debug_message("build-model entry")
-    # text processing and model pipeline
-
-
-    # define parameters for GridSearchCV
-
-
-    # create gridsearch object and return as final model pipeline
-
-    debug_message("build-model exit")
-
-    return model_pipeline
-
-
-def train(X, y, model):
-    debug_message("train entry (X: {}, y: {}, model: {}".format(X, y, model))
-    # train test split
-
-
-    # fit model
-
-
-    # output model test results
-
-    debug_message("train exit")
-    return model
 
 
 def export_model(model):
@@ -139,17 +112,25 @@ def export_model(model):
     debug_message("export model exit")
 
 
-def run_pipeline(data_file):
-    debug_message("run_pipeline entry (data_file: {}".format(data_file))
-    X, y = load_data(data_file)  # run ETL pipeline
+def main():
     
+    
+    if len(sys.argv) == 4:
+        messages_path, categories_path, db_path  = sys.argv[1:]
+            
+        X, y = run_ETL_pipeline(messages_path, categories_path, db_path)  # run ETL pipeline  
+        
+    else:
+        print('Please provide: \n'\
+              '-the filepath of the disaster messages file as the first argument \n'\
+              '-the filepath of the disaster categories file as the second argument \n'\
+              '-the name of file where you want to save cleaned dataset \n'\
+              '\nExample: python process_data.py disaster_messages.csv disaster_categories.csv DisasterResponse.db')
+        
     '''
-    model = build_model()  # build model pipeline
-    model = train(X, y, model)  # train model pipeline
-    export_model(model)  # save model
+    
     '''
 
 
 if __name__ == '__main__':
-    data_file = sys.argv[1]  # get filename of dataset
-    run_pipeline(data_file)  # run data pipeline
+    main()
