@@ -5,6 +5,16 @@ from sqlalchemy import create_engine
 
 DEBUG = True
 def debug_message(message):
+    '''
+    Print debug messages (if activated)
+
+    Args:
+        message: the message to be printed
+
+    Returns:
+        None
+    '''
+    
     if DEBUG == True:
         print("Debug: {0}".format(message))
 
@@ -14,11 +24,11 @@ def extract_column_names(row):
     
     Column names must be string before first occurance of '-'
     
-    Input:
-    row
+    Args:
+        row
     
-    Output:
-    column_names
+    Returns:
+        column_names
     '''
     
     column_names = []
@@ -30,6 +40,17 @@ def extract_column_names(row):
     return column_names
 
 def run_ETL_pipeline(messages_path, categories_path, db_path):
+    '''
+    The function Orchestrates run_ETL_pipeline
+        
+    Args:
+        messages_path: path to the file containing messages
+        categories_path: path to the file containing categories
+        db_path: path where to save the result
+    
+    Returns:
+        None
+    '''
     
     debug_message("run_ETL_pipeline entry (messages_path: {} | categories_path: {})".format(messages_path, categories_path))
     # 1. === read in file
@@ -89,36 +110,42 @@ def run_ETL_pipeline(messages_path, categories_path, db_path):
     
     
     # 3. === load to database
+    save_cleaned_data(df, db_path)
+    
+    debug_message("run_ETL_pipeline exit")
+
+
+def save_cleaned_data(df, db_path):
+    '''
+    Saves scleaned data into the file
+    
+    Args:
+        model: the model to be saved
+        db_path: the location where model will be saved
+
+    Returns:
+        None
+    '''
+    
+    debug_message("save model enter")
+
+    # Export model as a pickle file
     sql_path = 'sqlite:///{}'.format(db_path)
     engine = create_engine(sql_path)
     df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
-
-    # 4. === define features and label arrays
-
-    X = df['message']
-    y = df.drop(columns=['message', 'original', 'genre'])
     
-    debug_message("run_ETL_pipeline exit")
-                  
-    return X, y
-
-
-
-def export_model(model):
-    debug_message("export model enter")
-
-    # Export model as a pickle file
-    
-    debug_message("export model exit")
+    debug_message("save model exit")
 
 
 def main():
-    
+    '''
+    Main function orchestrating the execution
+    '''
     
     if len(sys.argv) == 4:
         messages_path, categories_path, db_path  = sys.argv[1:]
             
-        X, y = run_ETL_pipeline(messages_path, categories_path, db_path)  # run ETL pipeline  
+        run_ETL_pipeline(messages_path, categories_path, db_path)  # run ETL pipeline  
         
     else:
         print('Please provide: \n'\
@@ -127,9 +154,6 @@ def main():
               '-the name of file where you want to save cleaned dataset \n'\
               '\nExample: python process_data.py disaster_messages.csv disaster_categories.csv DisasterResponse.db')
         
-    '''
-    
-    '''
 
 
 if __name__ == '__main__':

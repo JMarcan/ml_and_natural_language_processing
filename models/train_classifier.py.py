@@ -23,10 +23,31 @@ from sklearn.metrics import classification_report, accuracy_score
 
 DEBUG = True
 def debug_message(message):
+    '''
+    Print debug messages (if activated)
+
+    Args:
+        message: the message to be printed
+
+    Returns:
+        None
+    '''
+    
     if DEBUG == True:
         print("Debug: {0}".format(message))
+   
 
 def load_data(database_filepath):
+    '''
+    Load cleaned input data for the training
+
+    Args:
+        database_filepath: the path to the cleaned DB file
+
+    Returns:
+        X: input messages
+        Y: output categories
+    '''
     
     debug_message("load_data entry ({})".format(database_filepath))
     
@@ -47,16 +68,16 @@ stop_words = nltk.corpus.stopwords.words("english")
 lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
 def tokenize(text):
     '''
-    Description:
-        - Normalization to lowercase
-        - Remove punctuation characters
-        - Tokenization, lemmatization, and stop word removal
+    Text tokenization
+    - Normalization to lowercase
+    - Remove punctuation characters
+    - Tokenization, lemmatization, and stop word removal
     
-    Arguments:
-        - text as string
+    Args:
+        text: text as string
     
     Returns:
-        - tokens: a list of tockenized text
+        tokens: a list of tockenized text
     '''
     
     #normalize text and remove punctuation
@@ -72,6 +93,16 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Build model for training
+
+    Args:
+        None
+
+    Returns:
+        Model
+    '''
+    
     debug_message("build_model entry")
 
     model = Pipeline([
@@ -86,6 +117,18 @@ def build_model():
 
 
 def evaluate_model(model, x_test, y_test):
+    '''
+    Evaluate model accuracy and basic statistics as f-score
+
+    Args:
+        model:  model to be evaluated
+        x_test: input data
+        y_test: expected results
+
+    Returns:
+        None. Statistics is printed into terminal.
+    '''
+    
     debug_message("evaluate_model entry")
 
 
@@ -104,6 +147,17 @@ def evaluate_model(model, x_test, y_test):
     debug_message("evaluate_model exit")
     
 def save_model(model, model_filepath):
+    '''
+    Saves trained model into the file
+
+    Args:
+        model:  model to be saved
+        model_filepath: location where will be model saved
+
+    Returns:
+        None
+    '''
+    
     debug_message("save_model entry")
     
     with open(model_filepath, 'wb') as pickle_file:
@@ -113,6 +167,10 @@ def save_model(model, model_filepath):
 
 
 def main():
+    '''
+    Main function orchestrating the execution
+    '''
+    
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
