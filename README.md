@@ -36,7 +36,7 @@ Python 3
 - plotly
 
 ## Files in the repository
-- ‘data\process_data.py’: The ETL pipeline that process, cleans and stores in database prepared data for Machine Learning.
-- ‘models\trains_classifier.py’: The Machine Learning pipeline that fits, tunes, evaluates and exports the model to pickle file.
-- ‘app\run.py’: Starts the Flask server for the web app. User can in the web interface write messages he wants to classify.
-- ‘app\templates\*.html’: HTML templates for the web app.
+- `data\process_data.py`: The ETL pipeline that process, cleans and stores in database prepared data for Machine Learning.
+- `models\trains_classifier.py`: The Machine Learning pipeline that fits, tunes, evaluates and exports the model to pickle file.
+- `app\run.py`: Starts the Flask server for the web app. User can in the web interface write messages he wants to classify.
+- `app\templates\*.html`: HTML templates for the web app.
