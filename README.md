@@ -1,5 +1,4 @@
 # Disaster Response ML Pipeline Web App, Natural Language Processing
-![Web Interface](project_screen.png)
 
 ## Project description
 Projects as this helps to emergency services by classifying incoming messages 
@@ -11,6 +10,8 @@ That is especially important during natural disasters when emergency workers are
 - In the last step I've integrated Web App where you can input a message and get classification result.
 
 The project works with real messages provided by [Figure Eight](https://www.figure-eight.com/) that were received during natural disasters.
+
+![Web Interface](project_screen.png)
 
 ## Usage
 1. Run the following commands in the project's root directory to set up your database and model.
