@@ -3,7 +3,6 @@ import sys
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-import string
 import pandas as pd 
 from sqlalchemy import create_engine
 import re
@@ -94,7 +93,7 @@ def tokenize(text):
 
 def build_model():
     '''
-    Build model for training
+    The function builds model for training and uses GridSearchCV to find its optimal parameters
 
     Args:
         None
@@ -111,11 +110,19 @@ def build_model():
     ('forest', MultiOutputClassifier( RandomForestClassifier() ))
     ])
     
+    debug_message("Using GridSearchCV to find optimal model parameters")
+    # Use GridSearchCV to find optimal model's parameters
+    parameters = {
+        'vect__ngram_range': ((1, 1), (1, 2)) 
+    }
+    
+    tuned_model = GridSearchCV(model, param_grid=parameters, verbose=5, n_jobs = 4)
+    
     debug_message("build_model exit")
     
-    return model
+    return tuned_model
 
-
+    
 def evaluate_model(model, x_test, y_test):
     '''
     Evaluate model accuracy and basic statistics as f-score
@@ -164,7 +171,6 @@ def save_model(model, model_filepath):
         pickle.dump(model, pickle_file)
         
     debug_message("save_model exit")
-
 
 def main():
     '''
