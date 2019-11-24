@@ -39,32 +39,43 @@ def extract_column_names(row):
         
     return column_names
 
-def run_ETL_pipeline(messages_path, categories_path, db_path):
+def load_data(messages_path, categories_path):
     '''
-    The function Orchestrates run_ETL_pipeline
+    The function loads data
         
     Args:
         messages_path: path to the file containing messages
         categories_path: path to the file containing categories
-        db_path: path where to save the result
     
     Returns:
-        None
+        df: pandas dataframe containing merged datasets
     '''
     
     debug_message("run_ETL_pipeline entry (messages_path: {} | categories_path: {})".format(messages_path, categories_path))
-    # 1. === read in file
-    
-    # 1. Load datasets
+
+    # Load datasets
     messages = pd.read_csv(messages_path)
     categories = pd.read_csv(categories_path)
     
-    # 2. Merge datasets
+    # Merge datasets
     df = pd.merge(messages, categories, how="left", on="id")
-
-    # 2. === clean data
     
-    #3. Split categories into separate category columns.
+    debug_message("load_data exit")
+
+    return df
+
+def clean_data(df):
+    '''
+    The function cleans data so they can be later applied for machine learning
+        
+    Args:
+        df: pandas dataframe containing merged dataset
+    
+    Returns:
+        df: cleaned pandas dataframe prepared to be used in machine learning
+    '''
+
+    # Split categories into separate category columns.
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(";", expand=True)
     
@@ -79,7 +90,6 @@ def run_ETL_pipeline(messages_path, categories_path, db_path):
     # rename the columns of `categories`
     categories.columns = category_colnames
     
-    # 4. Convert category values to just numbers 0 or 1.
     # Convert category values to just numbers 0 or 1
     for column in categories:
         # set each value to be the last character of the string
@@ -88,14 +98,14 @@ def run_ETL_pipeline(messages_path, categories_path, db_path):
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
         
-    # 5. Replace categories column in df with new category columns
+    # Replace categories column in df with new category columns
     # drop the original categories column from `df`
     df = df.drop(columns = ["categories"])
 
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df, categories], axis=1)
 
-    # 6. Remove duplicates.
+    # Remove duplicates.
     
     # check number of duplicates
     duplicated = df[df.duplicated(subset = 'message')]
@@ -108,8 +118,32 @@ def run_ETL_pipeline(messages_path, categories_path, db_path):
     duplicated = df[df.duplicated(subset = 'message')]
     debug_message("Number of duplicates after removing them: {}".format(duplicated.shape[0]))
     
+    debug_message("clean_data exit")
+
+    return df
     
-    # 3. === load to database
+def run_ETL_pipeline(messages_path, categories_path, db_path):
+    '''
+    The function Orchestrates ETL pipeline run
+        
+    Args:
+        messages_path: path to the file containing messages
+        categories_path: path to the file containing categories
+        db_path: path where to save the result
+    
+    Returns:
+        None
+    '''
+    
+    debug_message("run_ETL_pipeline entry (messages_path: {} | categories_path: {})".format(messages_path, categories_path))
+    
+    # 1. Load datasets
+    df = load_data(messages_path, categories_path)
+
+    # 2. clean data
+    df = clean_data(df)
+    
+    # 3. stores cleaned data to database
     save_cleaned_data(df, db_path)
     
     debug_message("run_ETL_pipeline exit")
