@@ -1,0 +1,12 @@
+# Files to ignore
+*.ipynb_checkpoints
+*.pth
+*.log
+
+# Folders to ignore
+**/__pycache__/**
+**/.vscode/**
+**/data/**
+ 
+# Project specific folders to ignore
+**/facial_keypoint_detection/detector_architectures
